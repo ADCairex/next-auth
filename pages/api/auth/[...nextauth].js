@@ -1,13 +1,9 @@
 import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
-import { FirebaseAdapter } from "@next-auth/firebase-adapter"
+import GoogleProvider from "next-auth/providers/google"
 
-import firebase from "firebase/app"
-import "firebase/firestore"
-
-const firestore = (
-  firebase.apps[0] ?? firebase.initializeApp(/* your config */)
-).firestore()
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter"
+import clientPromise from "../../../lib/mongodb"
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -18,7 +14,11 @@ export default NextAuth({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    })
     // ...add more providers here
   ],
-  adapter: FirebaseAdapter(firestore),
+  adapter: MongoDBAdapter(clientPromise),
 });
